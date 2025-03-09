@@ -46,9 +46,12 @@ class TextCaseConverterState extends State<TextCaseConverter> {
     setState(() {
       _convertedText = _controller.text
           .split(' ')
-          .map((str) => str.isNotEmpty
-          ? str[0].toUpperCase() + str.substring(1).toLowerCase()
-          : '',)
+          .map(
+            (str) =>
+                str.isNotEmpty
+                    ? str[0].toUpperCase() + str.substring(1).toLowerCase()
+                    : '',
+          )
           .join(' ');
     });
   }
@@ -89,8 +92,10 @@ class TextCaseConverterState extends State<TextCaseConverter> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Colors.tealAccent,
-                      width: 2,),
+                  borderSide: const BorderSide(
+                    color: Colors.tealAccent,
+                    width: 2,
+                  ),
                 ),
                 filled: true,
                 fillColor: Colors.white,
@@ -114,8 +119,11 @@ class TextCaseConverterState extends State<TextCaseConverter> {
             const SizedBox(height: 10),
             Text(
               _convertedText.isEmpty ? 'No text to convert' : _convertedText,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold,
-                  color: Colors.teal,),
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.teal,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
@@ -125,17 +133,18 @@ class TextCaseConverterState extends State<TextCaseConverter> {
       ),
     );
   }
-  // Custom button styling
+
   Widget _buildCustomButton(String text, VoidCallback onPressed) {
     return ElevatedButton(
       onPressed: onPressed,
       style: ButtonStyle(
         backgroundColor: WidgetStateProperty.all(Colors.teal),
         padding: WidgetStateProperty.all(
-          const EdgeInsets.symmetric(vertical: 12, horizontal: 24,),),
-        shape: WidgetStateProperty.all(RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),),
+          const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+        ),
+        shape: WidgetStateProperty.all(
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
         elevation: WidgetStateProperty.all(5),
       ),
       child: Text(
