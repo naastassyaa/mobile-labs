@@ -2,7 +2,7 @@ class InputValidation {
   static String? validateEmail(String? value) {
     if (value == null || value.isEmpty) {
       return 'Please, enter email!';
-    } else if (!value.contains('@')) {
+    } else if (!value.contains('@gmail.com')) {
       return 'Email is incorrect!';
     }
     return null;
