@@ -1,30 +1,27 @@
-# Lab 1
-## Text Case Converter
+# Fridge Manage App
 
-### Overview
-The **Text Case Converter** is a Flutter application that allows users to convert input text into different case formats, including:
-- Uppercase
-- Lowercase
-- Title Case
+A Flutter application designed to simplify the management of your fridge. Keep track of your fridge's temperature, manage your products, and enjoy a seamless experience with user authentication and profile management.
 
-Users can enter text into the input field and use buttons to transform the text accordingly. A "Clear" button is also provided to reset the input field and converted text.
+---
 
-### Features
-- Convert text to **Uppercase**.
-- Convert text to **Lowercase**.
-- Convert text to **Title Case**.
-- Clear input and output text.
+## Features
 
-### Usage
-1. Enter text in the text field.
-2. Click the respective button to convert the text:
-    - "To Uppercase" → Converts text to uppercase.
-    - "To Lowercase" → Converts text to lowercase.
-    - "To Title Case" → Converts text to title case.
-3. The converted text is displayed below.
-4. Click "Clear" to reset the input and output.
+- **User Authentication**
+   - **Login:** Securely log in to your account.
+   - **Registration:** Quick and easy account creation.
 
-### Example
+- **User Profile**  
+  Update your personal information and manage your preferences with ease.
 
-![Alt text](images/app-example.png)
+- **Manage Fridge Temperature**  
+  Easily adjust and monitor your fridge's temperature to ensure optimal storage conditions.
+
+- **Fridge Management**
+   - **Add New Fridge:** Add multiple fridges to manage your products efficiently.
+   - **View Fridges:** See all your added fridges in one place.
+
+- **Product Management**
+   - **Scan Products:** Use the built-in scanner to add products directly from your fridge.
+   - **List Products:** Get a comprehensive list of all products in your fridge.
+   - **Product Search:** Quickly find products using the search functionality.
 
