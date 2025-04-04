@@ -2,9 +2,42 @@ import 'package:flutter/material.dart';
 import 'package:test_project/components/bottom_nav_bar.dart';
 import 'package:test_project/components/custom_button.dart';
 import 'package:test_project/components/profile_header.dart';
+import 'package:test_project/storage/shared_preferences.dart';
+import 'package:test_project/storage/user_data_storage.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  String? firstName;
+  String? lastName;
+  late UserDataStorage _userDataStorage;
+
+  @override
+  void initState() {
+    super.initState();
+    _userDataStorage = Preferences();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    firstName = await _userDataStorage.getFirstName();
+    lastName = await _userDataStorage.getLastName();
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  Future<void> _logout(BuildContext context) async {
+    await _userDataStorage.logoutUser();
+    if (context.mounted) {
+      Navigator.pushReplacementNamed(context, '/login');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +48,8 @@ class ProfilePage extends StatelessWidget {
         child: ListView(
           children: [
             ProfileHeader(
+              firstName: firstName,
+              lastName: lastName,
               onEditProfile: () {
                 Navigator.pushNamed(context, '/edit');
               },
@@ -125,7 +160,7 @@ class ProfilePage extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: CustomButton(
-                onPressed: () {},
+                onPressed: () => _logout(context),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(

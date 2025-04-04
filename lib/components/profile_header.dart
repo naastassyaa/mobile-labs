@@ -3,8 +3,15 @@ import 'package:test_project/components/custom_button.dart';
 
 class ProfileHeader extends StatelessWidget {
   final VoidCallback onEditProfile;
+  final String? firstName;
+  final String? lastName;
 
-  const ProfileHeader({required this.onEditProfile, super.key});
+  const ProfileHeader({
+    required this.onEditProfile,
+    this.firstName,
+    this.lastName,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +34,10 @@ class ProfileHeader extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Username',
-                    style: TextStyle(
+                  Text(
+                    lastName != null ? '$firstName $lastName' : firstName ??
+                        'Username',
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: Colors.black,

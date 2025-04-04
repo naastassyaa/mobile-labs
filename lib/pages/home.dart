@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:test_project/components/bottom_nav_bar.dart';
+import 'package:test_project/components/home_temperature_card.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -9,9 +10,10 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  final List<String> items = ['Milk', 'Avocado', 'Butter', 'Bread', 'Tomato',];
+  List<String> items = [];
   List<String> filteredItems = [];
   final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _addProductController = TextEditingController();
   double _temperature = 4;
 
   @override
@@ -28,6 +30,23 @@ class HomePageState extends State<HomePage> {
     });
   }
 
+  void _addProduct(String newItem) {
+    if (newItem.isNotEmpty) {
+      setState(() {
+        items.add(newItem);
+        filteredItems.add(newItem);
+        _addProductController.clear();
+      });
+    }
+  }
+
+  void _removeItem(String itemToRemove) {
+    setState(() {
+      items.remove(itemToRemove);
+      filteredItems.remove(itemToRemove);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,57 +58,13 @@ class HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              elevation: 4,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Set Refrigerator Temperature',
-                      style:
-                      TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Icon(Icons.ac_unit, color: Colors.lightBlue),
-                        Text('${_temperature.toStringAsFixed(1)}°C'),
-                      ],
-                    ),
-                    Slider(
-                      value: _temperature,
-                      min: -5,
-                      max: 10,
-                      divisions: 30,
-                      activeColor: Colors.lightBlue,
-                      inactiveColor: Colors.lightBlue.shade100,
-                      onChanged: (value) {
-                        setState(() {
-                          _temperature = value;
-                        });
-                      },
-                    ),
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Min: -5°C',
-                          style: TextStyle(fontSize: 14, color: Colors.grey),
-                        ),
-                        Text(
-                          'Max: 10°C',
-                          style: TextStyle(fontSize: 14, color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+            HomeTemperatureCard(
+              temperature: _temperature,
+              onTemperatureChanged: (value) {
+                setState(() {
+                  _temperature = value;
+                });
+              },
             ),
             const SizedBox(height: 20),
             TextField(
@@ -106,13 +81,41 @@ class HomePageState extends State<HomePage> {
               onChanged: _filterItems,
             ),
             const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _addProductController,
+                    decoration: InputDecoration(
+                      labelText: 'Add product',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.add),
+                  onPressed: () => _addProduct(_addProductController.text),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
             Expanded(
               child: ListView(
                 children: [
                   ExpansionTile(
                     title: const Text('List of products in the refrigerator'),
                     children: filteredItems
-                        .map((item) => ListTile(title: Text(item)))
+                        .map((item) => ListTile(
+                      title: Text(item),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () => _removeItem(item),
+                      ),
+                    ),)
                         .toList(),
                   ),
                 ],
@@ -121,7 +124,7 @@ class HomePageState extends State<HomePage> {
           ],
         ),
       ),
-        bottomNavigationBar: const BottomNavBar(currentIndex: 0,),
+      bottomNavigationBar: const BottomNavBar(currentIndex: 0),
     );
   }
 }
