@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:test_project/components/custom_button.dart';
+import 'package:test_project/components/general/custom_button.dart';
 
 class ProfileHeader extends StatelessWidget {
   final VoidCallback onEditProfile;

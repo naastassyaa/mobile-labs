@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:test_project/components/bottom_nav_bar.dart';
-import 'package:test_project/components/home_temperature_card.dart';
+import 'package:test_project/components/general/bottom_nav_bar.dart';
+import 'package:test_project/components/specific/home_temperature_card.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:test_project/components/custom_button.dart';
-import 'package:test_project/components/custom_textfield.dart';
-import 'package:test_project/components/input_validation.dart';
-import 'package:test_project/storage/shared_preferences.dart';
+import 'package:test_project/components/general/custom_button.dart';
+import 'package:test_project/components/general/custom_textfield.dart';
+import 'package:test_project/components/specific/input_validation.dart';
 import 'package:test_project/storage/user_data_storage.dart';
 
 class LoginPage extends StatefulWidget {
@@ -17,14 +17,6 @@ class LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  late UserDataStorage _userDataStorage;
-
-  @override
-  void initState() {
-    super.initState();
-    _checkLoginStatus();
-    _userDataStorage = Preferences();
-  }
 
   @override
   void dispose() {
@@ -33,18 +25,19 @@ class LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  Future<void> _checkLoginStatus() async {
-    final bool isLoggedIn = await _userDataStorage.isLoggedIn();
+  Future<void> _checkLoginStatus(UserDataStorage userDataStorage) async {
+    final bool isLoggedIn = await userDataStorage.isLoggedIn();
     if (isLoggedIn && mounted) {
       Navigator.pushReplacementNamed(context, '/home');
     }
   }
 
-  Future<void> _login() async {
+  Future<void> _login(UserDataStorage userDataStorage) async {
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
-    final userData = await _userDataStorage.getUser(email);
+    final userData = await userDataStorage.getUser(email);
     if (!mounted) return;
+
     if (userData == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('User with this email not found')),
@@ -52,18 +45,23 @@ class LoginPageState extends State<LoginPage> {
     } else if (userData['password'] == password) {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('currentUserEmail', email);
-      await _userDataStorage.updateLoginStatus(email, true);
+      await userDataStorage.updateLoginStatus(email, true);
       if (!mounted) return;
       Navigator.pushReplacementNamed(context, '/home');
     } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Incorrect password')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Incorrect password')),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final userDataStorage = Provider.of<UserDataStorage>(context,
+        listen: false,);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkLoginStatus(userDataStorage);
+    });
     return Scaffold(
       appBar: AppBar(backgroundColor: Colors.white),
       body: SingleChildScrollView(
@@ -108,7 +106,7 @@ class LoginPageState extends State<LoginPage> {
                   ),
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      _login();
+                      _login(userDataStorage);
                     }
                   },
                   text: 'Log in',

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:test_project/components/custom_button.dart';
-import 'package:test_project/components/custom_textfield.dart';
-import 'package:test_project/components/input_validation.dart';
-import 'package:test_project/storage/shared_preferences.dart';
+import 'package:provider/provider.dart';
+import 'package:test_project/components/general/custom_button.dart';
+import 'package:test_project/components/general/custom_textfield.dart';
+import 'package:test_project/components/specific/input_validation.dart';
 import 'package:test_project/storage/user_data_storage.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -17,30 +17,29 @@ class RegisterPageState extends State<RegisterPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  late UserDataStorage _userDataStorage;
 
   @override
-  void initState() {
-    super.initState();
-    _checkLoginStatus();
-    _userDataStorage = Preferences();
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
-  Future<void> _checkLoginStatus() async {
-    final bool isLoggedIn = await _userDataStorage.isLoggedIn();
-    if (isLoggedIn) {
-      if (!mounted) return;
+  Future<void> _checkLoginStatus(UserDataStorage userDataStorage) async {
+    final bool isLoggedIn = await userDataStorage.isLoggedIn();
+    if (isLoggedIn && mounted) {
       Navigator.pushReplacementNamed(context, '/home');
     }
   }
 
-  Future<void> _register() async {
+  Future<void> _register(UserDataStorage userDataStorage) async {
     final String name = _nameController.text.trim();
     final String email = _emailController.text.trim();
     final String password = _passwordController.text.trim();
 
     if (name.isNotEmpty && email.isNotEmpty && password.isNotEmpty) {
-      await _userDataStorage.saveUser(
+      await userDataStorage.saveUser(
         email: email,
         password: password,
         name: name,
@@ -59,6 +58,11 @@ class RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    final userDataStorage = Provider.of<UserDataStorage>(context,
+        listen: false,);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkLoginStatus(userDataStorage);
+    });
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -105,7 +109,7 @@ class RegisterPageState extends State<RegisterPage> {
                   ),
                   onPressed: () async {
                     if (!_formKey.currentState!.validate()) return;
-                    await _register();
+                    await _register(userDataStorage);
                   },
                   text: 'Sign up',
                   textColor: Colors.white,
