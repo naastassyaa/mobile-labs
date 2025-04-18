@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:test_project/components/bottom_nav_bar.dart';
-import 'package:test_project/components/circle_button.dart';
+import 'package:test_project/components/general/bottom_nav_bar.dart';
+import 'package:test_project/components/specific/circle_button.dart';
 
 class ScanFridgePage extends StatelessWidget {
   const ScanFridgePage({super.key});
