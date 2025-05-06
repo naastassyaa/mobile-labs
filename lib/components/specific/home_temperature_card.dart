@@ -5,9 +5,7 @@ class HomeTemperatureCard extends StatefulWidget {
   final ValueChanged<double> onTemperatureChanged;
 
   const HomeTemperatureCard({
-    required this.temperature,
-    required this.onTemperatureChanged,
-    super.key,
+    required this.temperature, required this.onTemperatureChanged, super.key,
   });
 
   @override
@@ -15,12 +13,15 @@ class HomeTemperatureCard extends StatefulWidget {
 }
 
 class HomeTemperatureCardState extends State<HomeTemperatureCard> {
+  static const double _minTemp = -5;
+  static const double _maxTemp = 10;
+
   late double _temperature;
 
   @override
   void initState() {
     super.initState();
-    _temperature = widget.temperature;
+    _temperature = widget.temperature.clamp(_minTemp, _maxTemp);
   }
 
   @override
@@ -28,7 +29,7 @@ class HomeTemperatureCardState extends State<HomeTemperatureCard> {
     super.didUpdateWidget(oldWidget);
     if (widget.temperature != oldWidget.temperature) {
       setState(() {
-        _temperature = widget.temperature;
+        _temperature = widget.temperature.clamp(_minTemp, _maxTemp);
       });
     }
   }
@@ -49,38 +50,35 @@ class HomeTemperatureCardState extends State<HomeTemperatureCard> {
               'Set Refrigerator Temperature',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
+            const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Icon(Icons.ac_unit, color: Colors.lightBlue),
-                Text('${_temperature.toStringAsFixed(1)}°C'),
+                Text(
+                  '${_temperature.toStringAsFixed(1)}°C',
+                  style: const TextStyle(fontSize: 16),
+                ),
               ],
             ),
             Slider(
               value: _temperature,
-              min: -5,
-              max: 10,
-              divisions: 30,
-              activeColor: Colors.lightBlue,
-              inactiveColor: Colors.lightBlue.shade100,
+              min: _minTemp,
+              max: _maxTemp,
+              divisions: ((_maxTemp - _minTemp) ~/ 0.5),
+              label: '${_temperature.toStringAsFixed(1)}°C',
               onChanged: (value) {
-                setState(() {
-                  _temperature = value;
-                });
+                setState(() => _temperature = value);
                 widget.onTemperatureChanged(value);
               },
             ),
             const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Min: -5°C',
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
-                ),
-                Text(
-                  'Max: 10°C',
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
-                ),
+                Text('Min: -5°C', style: TextStyle(fontSize: 14,
+                    color: Colors.grey,),),
+                Text('Max: 10°C', style: TextStyle(fontSize: 14,
+                    color: Colors.grey,),),
               ],
             ),
           ],
