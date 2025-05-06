@@ -9,7 +9,9 @@ import 'package:test_project/pages/scan.dart';
 final Map<String, WidgetBuilder> appRoutes = {
   '/login': (context) => const LoginPage(),
   '/register': (context) => const RegisterPage(),
-  '/home': (context) => const HomePage(),
+  '/home': (context) => HomePage(
+    initialProducts: ModalRoute.of(context)?.settings.arguments
+    as List<String>?,),
   '/scan': (context) => const ScanFridgePage(),
   '/profile': (context) => const ProfilePage(),
   '/edit': (context) => const EditProfilePage(),

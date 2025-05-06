@@ -6,6 +6,34 @@ class ActionButtons extends StatelessWidget {
 
   const ActionButtons({required this.onLogout, super.key});
 
+  void _confirmLogout(BuildContext context) {
+    showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Confirm Logout'),
+        content: const Text('Are you sure you want to log out?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    ).then((confirmed) {
+      if (confirmed == true) {
+        onLogout();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -45,12 +73,13 @@ class ActionButtons extends StatelessWidget {
         SizedBox(
           width: double.infinity,
           child: CustomButton(
-            onPressed: onLogout,
+            onPressed: () => _confirmLogout(context),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-              shape: RoundedRectangleBorder(borderRadius:
-              BorderRadius.circular(16),),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
             ),
             icon: Icons.logout,
             text: 'Logout',

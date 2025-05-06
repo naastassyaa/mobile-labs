@@ -5,7 +5,9 @@ class HomeTemperatureCard extends StatefulWidget {
   final ValueChanged<double> onTemperatureChanged;
 
   const HomeTemperatureCard({
-    required this.temperature, required this.onTemperatureChanged, super.key,
+    required this.temperature,
+    required this.onTemperatureChanged,
+    super.key,
   });
 
   @override
@@ -19,6 +21,16 @@ class HomeTemperatureCardState extends State<HomeTemperatureCard> {
   void initState() {
     super.initState();
     _temperature = widget.temperature;
+  }
+
+  @override
+  void didUpdateWidget(covariant HomeTemperatureCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.temperature != oldWidget.temperature) {
+      setState(() {
+        _temperature = widget.temperature;
+      });
+    }
   }
 
   @override
