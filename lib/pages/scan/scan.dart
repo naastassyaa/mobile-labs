@@ -1,31 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_project/components/general/bottom_nav_bar.dart';
 import 'package:test_project/components/specific/circle_button.dart';
+import 'package:test_project/pages/scan/scan_cubit.dart';
 import 'package:test_project/services/fridge_data.dart';
-import 'package:test_project/services/mqtt_service.dart';
 
-class ScanFridgePage extends StatefulWidget {
+class ScanFridgePage extends StatelessWidget {
   const ScanFridgePage({super.key});
 
   @override
-  State<ScanFridgePage> createState() => _ScanFridgePageState();
+  Widget build(BuildContext context) {
+    return BlocProvider<ScanFridgeCubit>(
+      create: (_) => ScanFridgeCubit(),
+      child: const _ScanFridgeView(),
+    );
+  }
 }
 
-class _ScanFridgePageState extends State<ScanFridgePage> {
-  final MqttService _mqttService = MqttService();
-  List<String> _productList = [];
+class _ScanFridgeView extends StatelessWidget {
+  const _ScanFridgeView();
 
-  @override
-  void initState() {
-    super.initState();
-    _mqttService.onMessageReceived = (msg) {
-      _productList = msg.split(',').map((e) => e.trim()).toList();
-    };
-    _mqttService.connect();
-  }
-
-  void _startScan() {
-    debugPrint('Scanning start');
+  void _startScan(BuildContext context) {
     showDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -33,17 +28,17 @@ class _ScanFridgePageState extends State<ScanFridgePage> {
         title: Text('Scanning...'),
         content: SizedBox(
           height: 80,
-          child: Center(
-            child: CircularProgressIndicator(),
-          ),
+          child: Center(child: CircularProgressIndicator()),
         ),
       ),
     );
 
     Future.delayed(const Duration(seconds: 3), () {
-      if (!mounted) return;
+      if (!context.mounted) return;
       Navigator.of(context).pop();
-      FridgeData().products = _productList;
+
+      final products = context.read<ScanFridgeCubit>().state.products;
+      FridgeData().products = products;
 
       showDialog<void>(
         context: context,
@@ -51,28 +46,19 @@ class _ScanFridgePageState extends State<ScanFridgePage> {
           title: const Text('Products Found'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
-            children: _productList.isNotEmpty
-                ? _productList.map((p) => Text('• $p')).toList()
+            children: products.isNotEmpty
+                ? products.map((p) => const Text('• \$p')).toList()
                 : [const Text('No products found')],
           ),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+              onPressed: () => Navigator.of(context).pop(),
               child: const Text('OK'),
             ),
           ],
         ),
       );
     });
-
-  }
-
-  @override
-  void dispose() {
-    _mqttService.disconnect();
-    super.dispose();
   }
 
   @override
@@ -84,7 +70,7 @@ class _ScanFridgePageState extends State<ScanFridgePage> {
       ),
       body: Center(
         child: CircularButton(
-          onPressed: _startScan,
+          onPressed: () => _startScan,
           text: 'Start\nScanning\nFridge',
         ),
       ),
