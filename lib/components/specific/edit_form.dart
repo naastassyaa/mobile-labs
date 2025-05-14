@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:test_project/components/general/custom_textfield.dart';
+import 'package:test_project/components/general/custom_text_field.dart';
 import 'package:test_project/components/specific/input_validation.dart';
 
 class EditProfileFormFields extends StatelessWidget {
