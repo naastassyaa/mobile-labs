@@ -13,11 +13,9 @@ class EditProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<EditProfileCubit>(
-      create: (context) {
-        return EditProfileCubit(
-          storage: context.read<UserDataStorage>(),
-        )..init();
-      },
+      create: (context) => EditProfileCubit(
+        storage: context.read<UserDataStorage>(),
+      )..init(),
       child: const _EditProfileView(),
     );
   }
@@ -40,13 +38,14 @@ class _EditProfileViewState extends State<_EditProfileView> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final state = context.read<EditProfileCubit>().state;
-      _nameCtrl.text = state.name ?? '';
-      _surnameCtrl.text = state.surname ?? '';
-      _dobCtrl.text = state.dob ?? '';
-      _emailCtrl.text = state.email ?? '';
-      _phoneCtrl.text = state.phone ?? '';
+    context.read<EditProfileCubit>().stream.listen((state) {
+      if (state.loaded) {
+        _nameCtrl.text = state.name ?? '';
+        _surnameCtrl.text = state.surname ?? '';
+        _dobCtrl.text = state.dob ?? '';
+        _emailCtrl.text = state.email ?? '';
+        _phoneCtrl.text = state.phone ?? '';
+      }
     });
   }
 
@@ -63,7 +62,8 @@ class _EditProfileViewState extends State<_EditProfileView> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<EditProfileCubit, EditProfileState>(
-      listenWhen: (prev, curr) => !prev.hasConnection && curr.hasConnection,
+      listenWhen: (prev, curr) =>
+      prev.hasConnection && !curr.hasConnection,
       listener: (_, __) => showDialog<void>(
         context: context,
         builder: (_) => const NoInternetConnectionDialog(),
@@ -71,10 +71,8 @@ class _EditProfileViewState extends State<_EditProfileView> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
-          title: const Text(
-            'Edit Profile',
-            style: TextStyle(color: Colors.black),
-          ),
+          title: const Text('Edit Profile',
+              style: TextStyle(color: Colors.black),),
           iconTheme: const IconThemeData(color: Colors.black),
         ),
         body: BlocConsumer<EditProfileCubit, EditProfileState>(
@@ -92,28 +90,51 @@ class _EditProfileViewState extends State<_EditProfileView> {
           builder: (context, state) {
             return Padding(
               padding: const EdgeInsets.all(16),
-              child: ListView(
-                children: [
-                  EditProfileFormFields(
-                    nameController: _nameCtrl,
-                    surnameController: _surnameCtrl,
-                    dobController: _dobCtrl,
-                    emailController: _emailCtrl,
-                    phoneController: _phoneCtrl,
-                    gender: state.gender,
-                    onGenderChanged: (value) => context
-                        .read<EditProfileCubit>()
-                        .updateField(gender: value),
-                  ),
-                  const SizedBox(height: 20),
-                  SaveProfileButton(
-                    onSave: () {
-                      if (_formKey.currentState?.validate() ?? false) {
-                        context.read<EditProfileCubit>().saveProfile();
-                      }
-                    },
-                  ),
-                ],
+              child: Form(
+                key: _formKey,
+                child: ListView(
+                  children: [
+                    EditProfileFormFields(
+                      nameController: _nameCtrl,
+                      surnameController: _surnameCtrl,
+                      dobController: _dobCtrl,
+                      emailController: _emailCtrl,
+                      phoneController: _phoneCtrl,
+                      gender: state.gender,
+                      onNameChanged: (val) =>
+                          context.read<EditProfileCubit>()
+                              .updateField(name: val),
+                      onSurnameChanged: (val) =>
+                          context.read<EditProfileCubit>()
+                              .updateField(surname: val),
+                      onDobChanged: (val) =>
+                          context.read<EditProfileCubit>()
+                              .updateField(dob: val),
+                      onEmailChanged: (val) =>
+                          context.read<EditProfileCubit>()
+                              .updateField(email: val),
+                      onPhoneChanged: (val) =>
+                          context.read<EditProfileCubit>()
+                              .updateField(phone: val),
+                      onGenderChanged: (val) =>
+                          context.read<EditProfileCubit>()
+                              .updateField(gender: val),
+                    ),
+                    const SizedBox(height: 20),
+                    SaveProfileButton(
+                      onSave: () {
+                        if (_formKey.currentState?.validate() ?? false) {
+                          context.read<EditProfileCubit>().saveProfile();
+                        }
+                      },
+                    ),
+                    if (state.isSubmitting)
+                      const Padding(
+                        padding: EdgeInsets.only(top: 16),
+                        child: Center(child: CircularProgressIndicator()),
+                      ),
+                  ],
+                ),
               ),
             );
           },

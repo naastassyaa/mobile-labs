@@ -25,6 +25,7 @@ class EditProfileCubit extends Cubit<EditProfileState> {
           _onConnectivityChanged(status);
         });
     _checkInitialConnectivity();
+    _loadProfile();
   }
 
   Future<void> _checkInitialConnectivity() async {
@@ -54,11 +55,12 @@ class EditProfileCubit extends Cubit<EditProfileState> {
           password: data['password']?.toString(),
         ),);
       }
-    } catch (_) {}
+    } catch (_) {
+    }
   }
 
   Future<void> saveProfile() async {
-    emit(state.copyWith(isSubmitting: true));
+    emit(state.copyWith(isSubmitting: true, saveSuccess: false),);
     try {
       await _storage.saveUser(
         email: state.email ?? '',
@@ -74,7 +76,7 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     } catch (e) {
       emit(state.copyWith(
         isSubmitting: false,
-        errorMessage: 'Save error: \$e',
+        errorMessage: 'Save error: $e',
       ),);
     }
   }

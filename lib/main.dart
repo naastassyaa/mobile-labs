@@ -9,7 +9,7 @@ import 'package:test_project/storage/user_data_storage.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final userDataStorage = Preferences();
+  final userDataStorage = PreferencesStorage();
   final bool isLoggedIn = await userDataStorage.isLoggedIn();
 
   runApp(
