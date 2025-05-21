@@ -6,8 +6,16 @@ class MqttService {
   final client = MqttServerClient('broker.emqx.io', 'flutter_client_id');
   void Function(String)? onMessageReceived;
   void Function(double)? onTemperatureReceived;
+  String? _productTopic = 'sensor/products';
+  String? _temperatureTopic = 'sensor/temperature';
 
-  Future<void> connect() async {
+  Future<void> connect({
+    required String productTopic,
+    required String temperatureTopic,
+  }) async {
+    _productTopic = productTopic;
+    _temperatureTopic = temperatureTopic;
+
     client.port = 1883;
     client.keepAlivePeriod = 20;
     client.logging(on: false);
@@ -33,26 +41,29 @@ class MqttService {
       return;
     }
 
-    if (client.connectionStatus!.state == MqttConnectionState.connected) {
-      client.subscribe('sensor/products', MqttQos.atMostOnce);
-      client.subscribe('sensor/temperature', MqttQos.atMostOnce);
+    if (client.connectionStatus?.state == MqttConnectionState.connected) {
+      client.subscribe(_productTopic!, MqttQos.atMostOnce);
+      client.subscribe(_temperatureTopic!, MqttQos.atMostOnce);
 
-      client.updates?.listen((List<MqttReceivedMessage<MqttMessage>> messages) {
-        final recMess = messages.first.payload as MqttPublishMessage;
-        final payload = MqttPublishPayload.bytesToStringAsString(recMess.
-        payload.message,);
-
-        if (messages.first.topic == 'sensor/products') {
-          onMessageReceived?.call(payload);
-        } else if (messages.first.topic == 'sensor/temperature') {
-          try {
-            final temperature = double.parse(payload);
-            onTemperatureReceived?.call(temperature);
-          } catch (e) {
-            _debug('Error parsing temperature: $e, payload: $payload');
+      client.updates?.listen((messages) {
+        for (var message in messages) {
+          final recMess = message.payload as MqttPublishMessage;
+          final payload = MqttPublishPayload
+              .bytesToStringAsString(recMess.payload.message);
+          if (message.topic == _productTopic) {
+            onMessageReceived?.call(payload);
+          } else if (message.topic == _temperatureTopic) {
+            try {
+              final temperature = double.parse(payload);
+              onTemperatureReceived?.call(temperature);
+            } catch (e) {
+              _debug('Error parsing temperature: $e, payload: $payload');
+            }
           }
         }
       });
+    } else {
+      _debug('MQTT Connection State: \${client.connectionStatus?.state}');
     }
   }
 
@@ -62,9 +73,7 @@ class MqttService {
 
   void _debug(String message) {
     assert(() {
-      if (kDebugMode) {
-        print(message);
-      }
+      if (kDebugMode) print(message);
       return true;
     }());
   }

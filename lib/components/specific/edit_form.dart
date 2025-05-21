@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:test_project/components/general/custom_textfield.dart';
+import 'package:test_project/components/general/custom_text_field.dart';
 import 'package:test_project/components/specific/input_validation.dart';
 
 class EditProfileFormFields extends StatelessWidget {
@@ -9,6 +9,11 @@ class EditProfileFormFields extends StatelessWidget {
   final TextEditingController emailController;
   final TextEditingController phoneController;
   final String? gender;
+  final void Function(String) onNameChanged;
+  final void Function(String) onSurnameChanged;
+  final void Function(String) onDobChanged;
+  final void Function(String) onEmailChanged;
+  final void Function(String) onPhoneChanged;
   final void Function(String?) onGenderChanged;
 
   const EditProfileFormFields({
@@ -18,6 +23,11 @@ class EditProfileFormFields extends StatelessWidget {
     required this.emailController,
     required this.phoneController,
     required this.gender,
+    required this.onNameChanged,
+    required this.onSurnameChanged,
+    required this.onDobChanged,
+    required this.onEmailChanged,
+    required this.onPhoneChanged,
     required this.onGenderChanged,
     super.key,
   });
@@ -30,12 +40,14 @@ class EditProfileFormFields extends StatelessWidget {
           controller: nameController,
           labelText: 'First Name',
           validator: InputValidation.validateName,
+          onChanged: onNameChanged,
         ),
         const SizedBox(height: 16),
         CustomTextField(
           controller: surnameController,
           labelText: 'Last Name',
           validator: InputValidation.validateSurname,
+          onChanged: onSurnameChanged,
         ),
         const SizedBox(height: 16),
         InkWell(
@@ -50,7 +62,9 @@ class EditProfileFormFields extends StatelessWidget {
               lastDate: DateTime.now(),
             );
             if (pickedDate != null) {
-              dobController.text = pickedDate.toIso8601String().split('T')[0];
+              final iso = pickedDate.toIso8601String().split('T')[0];
+              dobController.text = iso;
+              onDobChanged(iso);
             }
           },
           child: AbsorbPointer(
@@ -58,6 +72,7 @@ class EditProfileFormFields extends StatelessWidget {
               controller: dobController,
               labelText: 'Date of Birth',
               validator: InputValidation.validateDob,
+              onChanged: onDobChanged,
             ),
           ),
         ),
@@ -66,12 +81,14 @@ class EditProfileFormFields extends StatelessWidget {
           controller: emailController,
           labelText: 'Email',
           validator: InputValidation.validateEmail,
+          onChanged: onEmailChanged,
         ),
         const SizedBox(height: 16),
         CustomTextField(
           controller: phoneController,
           labelText: 'Phone Number',
           validator: InputValidation.validatePhone,
+          onChanged: onPhoneChanged,
         ),
         const SizedBox(height: 16),
         DropdownButtonFormField<String>(
@@ -82,9 +99,9 @@ class EditProfileFormFields extends StatelessWidget {
           isExpanded: true,
           value: gender,
           hint: const Text('Select Gender'),
-          items: ['Male', 'Female', 'Other'].map((gender) {
-            return DropdownMenuItem<String>(value: gender, child: Text(gender));
-          }).toList(),
+          items: ['Male', 'Female', 'Other']
+              .map((g) => DropdownMenuItem(value: g, child: Text(g)))
+              .toList(),
           onChanged: onGenderChanged,
         ),
       ],

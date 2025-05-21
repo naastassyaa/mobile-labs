@@ -11,16 +11,10 @@ abstract class UserDataStorage {
   });
 
   Future<Map<String, dynamic>?> getCurrentUser();
-
   Future<void> logoutUser();
-
   Future<bool> isLoggedIn();
-
   Future<void> updateLoginStatus(String email, bool isLoggedIn);
-
   Future<Map<String, dynamic>?> getUser(String email);
-
   Future<String?> getFirstName();
-
   Future<String?> getLastName();
 }
