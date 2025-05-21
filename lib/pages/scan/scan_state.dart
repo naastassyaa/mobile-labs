@@ -7,8 +7,6 @@ class ScanFridgeState {
   const ScanFridgeState({this.products = const []});
 
   ScanFridgeState copyWith({List<String>? products}) {
-    return ScanFridgeState(
-      products: products ?? this.products,
-    );
+    return ScanFridgeState(products: products ?? this.products);
   }
 }

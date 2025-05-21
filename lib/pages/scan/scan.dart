@@ -33,11 +33,12 @@ class _ScanFridgeView extends StatelessWidget {
       ),
     );
 
-    Future.delayed(const Duration(seconds: 3), () {
+    final cubit = context.read<ScanFridgeCubit>();
+    cubit.stream.first.then((state) {
       if (!context.mounted) return;
       Navigator.of(context).pop();
 
-      final products = context.read<ScanFridgeCubit>().state.products;
+      final products = state.products;
       FridgeData().products = products;
 
       showDialog<void>(
@@ -47,7 +48,7 @@ class _ScanFridgeView extends StatelessWidget {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: products.isNotEmpty
-                ? products.map((p) => const Text('• \$p')).toList()
+                ? products.map((p) => Text('• $p')).toList()
                 : [const Text('No products found')],
           ),
           actions: [
@@ -70,7 +71,7 @@ class _ScanFridgeView extends StatelessWidget {
       ),
       body: Center(
         child: CircularButton(
-          onPressed: () => _startScan,
+          onPressed: () => _startScan(context),
           text: 'Start\nScanning\nFridge',
         ),
       ),

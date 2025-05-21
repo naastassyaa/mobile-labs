@@ -11,12 +11,15 @@ class ScanFridgeCubit extends Cubit<ScanFridgeState> {
   ScanFridgeCubit({MqttService? mqttService})
       : _mqttService = mqttService ?? MqttService(),
         super(const ScanFridgeState()) {
-    // Start MQTT connection
-    _mqttService.connect();
+    _mqttService.connect;
     _mqttService.onMessageReceived = (msg) {
       final list = msg.split(',').map((e) => e.trim()).toList();
       emit(state.copyWith(products: list));
     };
+    _mqttService.connect(
+      productTopic: 'my_app/12345/products',
+      temperatureTopic: 'my_app/12345/temperature',
+    );
   }
 
   @override

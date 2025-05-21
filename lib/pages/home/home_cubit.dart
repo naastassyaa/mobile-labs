@@ -33,6 +33,20 @@ class HomeCubit extends Cubit<HomeState> {
           _onConnectivityChanged(status);
         });
     _checkInitialConnectivity();
+    _mqttService.onMessageReceived = (payload) {
+      final items = payload.split(',').map((e) => e.trim()).toList();
+      FridgeData().products = items;
+      emit(state.copyWith(items: items, filteredItems: items));
+    };
+    _mqttService.onTemperatureReceived = (temp) {
+      final clamped = temp.clamp(-5.0, 5.0);
+      emit(state.copyWith(temperature: clamped));
+    };
+
+    _mqttService.connect(
+      productTopic: 'my_app/12345/products',
+      temperatureTopic: 'my_app/12345/temperature',
+    );
   }
 
   Future<void> _checkInitialConnectivity() async {
