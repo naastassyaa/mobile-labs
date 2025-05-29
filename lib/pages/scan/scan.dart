@@ -24,13 +24,14 @@ class _ScanFridgeView extends StatelessWidget {
     showDialog<void>(
       context: context,
       barrierDismissible: false,
-      builder: (_) => const AlertDialog(
-        title: Text('Scanning...'),
-        content: SizedBox(
-          height: 80,
-          child: Center(child: CircularProgressIndicator()),
-        ),
-      ),
+      builder:
+          (_) => const AlertDialog(
+            title: Text('Scanning...'),
+            content: SizedBox(
+              height: 80,
+              child: Center(child: CircularProgressIndicator()),
+            ),
+          ),
     );
 
     final cubit = context.read<ScanFridgeCubit>();
@@ -43,21 +44,23 @@ class _ScanFridgeView extends StatelessWidget {
 
       showDialog<void>(
         context: context,
-        builder: (_) => AlertDialog(
-          title: const Text('Products Found'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: products.isNotEmpty
-                ? products.map((p) => Text('• $p')).toList()
-                : [const Text('No products found')],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
+        builder:
+            (_) => AlertDialog(
+              title: const Text('Products Found'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children:
+                    products.isNotEmpty
+                        ? products.map((p) => Text('• $p')).toList()
+                        : [const Text('No products found')],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('OK'),
+                ),
+              ],
             ),
-          ],
-        ),
       );
     });
   }

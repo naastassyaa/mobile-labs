@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test_project/components/general/no_internet_connection.dart';
 import 'package:test_project/pages/auth/login/login_cubit.dart';
 import 'package:test_project/pages/auth/login/login_form.dart';
@@ -11,9 +10,9 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<AuthCubit>(
-      create: (_) => AuthCubit(
-          storage: context.read<UserDataStorage>(),)..init(),
+    return BlocProvider<LoginCubit>(
+      create:
+          (_) => LoginCubit(storage: context.read<UserDataStorage>())..init(),
       child: const _LoginView(),
     );
   }
@@ -21,6 +20,7 @@ class LoginPage extends StatelessWidget {
 
 class _LoginView extends StatefulWidget {
   const _LoginView();
+
   @override
   State<_LoginView> createState() => _LoginViewState();
 }
@@ -31,24 +31,6 @@ class _LoginViewState extends State<_LoginView> {
   final _passwordController = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _tryAutoLogin());
-  }
-
-  Future<void> _tryAutoLogin() async {
-    final storage = context.read<UserDataStorage>();
-    final prefs = await SharedPreferences.getInstance();
-    final email = prefs.getString('currentUserEmail');
-    if (email == null) return;
-    final userData = await storage.getUser(email);
-    if (userData == null) return;
-    await storage.updateLoginStatus(email, true);
-    if (!mounted) return;
-    Navigator.pushReplacementNamed(context, '/home');
-  }
-
-  @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
@@ -57,7 +39,7 @@ class _LoginViewState extends State<_LoginView> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthCubit, AuthState>(
+    return BlocListener<LoginCubit, LoginState>(
       listenWhen: (prev, curr) => prev.hasConnection && !curr.hasConnection,
       listener: (_, __) {
         showDialog<void>(
@@ -67,14 +49,10 @@ class _LoginViewState extends State<_LoginView> {
       },
       child: Scaffold(
         appBar: AppBar(backgroundColor: Colors.white),
-        body: BlocConsumer<AuthCubit, AuthState>(
+        body: BlocConsumer<LoginCubit, LoginState>(
+          listenWhen: (prev, curr) => !prev.loginSuccess && curr.loginSuccess,
           listener: (context, state) {
-            if (state.loginSuccess) {
-              Navigator.pushReplacementNamed(context, '/home');
-            } else if (state.errorMessage != null) {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(state.errorMessage!)));
-            }
+            Navigator.pushReplacementNamed(context, '/home');
           },
           builder: (context, state) {
             return Stack(
@@ -86,12 +64,6 @@ class _LoginViewState extends State<_LoginView> {
                     emailController: _emailController,
                     passwordController: _passwordController,
                     isLoading: state.isLoading,
-                    onLogin: (email, pass) =>
-                        context.read<AuthCubit>().login(email, pass),
-                    onForgotPassword: () =>
-                        Navigator.pushNamed(context, '/'),
-                    onRegister: () =>
-                        Navigator.pushNamed(context, '/register'),
                   ),
                 ),
                 if (state.isLoading)

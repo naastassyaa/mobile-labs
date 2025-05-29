@@ -48,8 +48,9 @@ class MqttService {
       client.updates?.listen((messages) {
         for (var message in messages) {
           final recMess = message.payload as MqttPublishMessage;
-          final payload = MqttPublishPayload
-              .bytesToStringAsString(recMess.payload.message);
+          final payload = MqttPublishPayload.bytesToStringAsString(
+            recMess.payload.message,
+          );
           if (message.topic == _productTopic) {
             onMessageReceived?.call(payload);
           } else if (message.topic == _temperatureTopic) {

@@ -25,17 +25,16 @@ class ProfileHeader extends StatelessWidget {
         ),
         child: Row(
           children: [
-            const CircleAvatar(
-              radius: 30,
-            ),
+            const CircleAvatar(radius: 30),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    lastName != null ? '$firstName $lastName' : firstName ??
-                        'Username',
+                    lastName != null
+                        ? '$firstName $lastName'
+                        : firstName ?? 'Username',
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,

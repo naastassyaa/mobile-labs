@@ -13,9 +13,10 @@ class EditProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<EditProfileCubit>(
-      create: (context) => EditProfileCubit(
-        storage: context.read<UserDataStorage>(),
-      )..init(),
+      create:
+          (context) =>
+              EditProfileCubit(storage: context.read<UserDataStorage>())
+                ..init(),
       child: const _EditProfileView(),
     );
   }
@@ -23,6 +24,7 @@ class EditProfilePage extends StatelessWidget {
 
 class _EditProfileView extends StatefulWidget {
   const _EditProfileView();
+
   @override
   State<_EditProfileView> createState() => _EditProfileViewState();
 }
@@ -62,29 +64,31 @@ class _EditProfileViewState extends State<_EditProfileView> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<EditProfileCubit, EditProfileState>(
-      listenWhen: (prev, curr) =>
-      prev.hasConnection && !curr.hasConnection,
-      listener: (_, __) => showDialog<void>(
-        context: context,
-        builder: (_) => const NoInternetConnectionDialog(),
-      ),
+      listenWhen: (prev, curr) => prev.hasConnection && !curr.hasConnection,
+      listener:
+          (_, __) => showDialog<void>(
+            context: context,
+            builder: (_) => const NoInternetConnectionDialog(),
+          ),
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
-          title: const Text('Edit Profile',
-              style: TextStyle(color: Colors.black),),
+          title: const Text(
+            'Edit Profile',
+            style: TextStyle(color: Colors.black),
+          ),
           iconTheme: const IconThemeData(color: Colors.black),
         ),
         body: BlocConsumer<EditProfileCubit, EditProfileState>(
           listener: (context, state) {
             if (state.saveSuccess) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Profile Updated')),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('Profile Updated')));
             } else if (state.errorMessage != null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.errorMessage!)),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
             }
           },
           builder: (context, state) {
@@ -101,24 +105,6 @@ class _EditProfileViewState extends State<_EditProfileView> {
                       emailController: _emailCtrl,
                       phoneController: _phoneCtrl,
                       gender: state.gender,
-                      onNameChanged: (val) =>
-                          context.read<EditProfileCubit>()
-                              .updateField(name: val),
-                      onSurnameChanged: (val) =>
-                          context.read<EditProfileCubit>()
-                              .updateField(surname: val),
-                      onDobChanged: (val) =>
-                          context.read<EditProfileCubit>()
-                              .updateField(dob: val),
-                      onEmailChanged: (val) =>
-                          context.read<EditProfileCubit>()
-                              .updateField(email: val),
-                      onPhoneChanged: (val) =>
-                          context.read<EditProfileCubit>()
-                              .updateField(phone: val),
-                      onGenderChanged: (val) =>
-                          context.read<EditProfileCubit>()
-                              .updateField(gender: val),
                     ),
                     const SizedBox(height: 20),
                     SaveProfileButton(

@@ -9,8 +9,8 @@ class ScanFridgeCubit extends Cubit<ScanFridgeState> {
   final MqttService _mqttService;
 
   ScanFridgeCubit({MqttService? mqttService})
-      : _mqttService = mqttService ?? MqttService(),
-        super(const ScanFridgeState()) {
+    : _mqttService = mqttService ?? MqttService(),
+      super(const ScanFridgeState()) {
     _mqttService.connect;
     _mqttService.onMessageReceived = (msg) {
       final list = msg.split(',').map((e) => e.trim()).toList();

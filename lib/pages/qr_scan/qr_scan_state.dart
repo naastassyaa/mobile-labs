@@ -14,11 +14,7 @@ class QrScanState {
     this.error,
   });
 
-  QrScanState copyWith({
-    QrScanStatus? status,
-    String? payload,
-    String? error,
-  }) {
+  QrScanState copyWith({QrScanStatus? status, String? payload, String? error}) {
     return QrScanState(
       status: status ?? this.status,
       payload: payload ?? this.payload,

@@ -11,8 +11,9 @@ class RegisterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<RegisterCubit>(
-      create: (_) => RegisterCubit(
-          storage: context.read<UserDataStorage>(),)..init(),
+      create:
+          (_) =>
+              RegisterCubit(storage: context.read<UserDataStorage>())..init(),
       child: const _RegisterView(),
     );
   }
@@ -20,6 +21,7 @@ class RegisterPage extends StatelessWidget {
 
 class _RegisterView extends StatefulWidget {
   const _RegisterView();
+
   @override
   State<_RegisterView> createState() => _RegisterViewState();
 }
@@ -42,10 +44,11 @@ class _RegisterViewState extends State<_RegisterView> {
   Widget build(BuildContext context) {
     return BlocListener<RegisterCubit, RegisterState>(
       listenWhen: (prev, curr) => prev.hasConnection && !curr.hasConnection,
-      listener: (_, __) => showDialog<void>(
-        context: context,
-        builder: (_) => const NoInternetConnectionDialog(),
-      ),
+      listener:
+          (_, __) => showDialog<void>(
+            context: context,
+            builder: (_) => const NoInternetConnectionDialog(),
+          ),
       child: Scaffold(
         appBar: AppBar(backgroundColor: Colors.white),
         body: BlocConsumer<RegisterCubit, RegisterState>(
@@ -53,8 +56,9 @@ class _RegisterViewState extends State<_RegisterView> {
             if (state.alreadyLoggedIn || state.registrationSuccess) {
               Navigator.pushReplacementNamed(context, '/home');
             } else if (state.errorMessage != null) {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
             }
           },
           builder: (context, state) {
@@ -66,9 +70,6 @@ class _RegisterViewState extends State<_RegisterView> {
                 emailController: _emailController,
                 passwordController: _passwordController,
                 isSubmitting: state.isSubmitting,
-                onRegister: (name, email, pass) =>
-                    context.read<RegisterCubit>().register(name, email, pass),
-                onLogin: () => Navigator.pushNamed(context, '/login'),
               ),
             );
           },

@@ -11,23 +11,20 @@ class RegisterCubit extends Cubit<RegisterState> {
   final Connectivity _connectivity;
   StreamSubscription<List<ConnectivityResult>>? _connectivitySub;
 
-  RegisterCubit({
-    required UserDataStorage storage,
-    Connectivity? connectivity,
-  })  : _storage = storage,
-        _connectivity = connectivity ?? Connectivity(),
-        super(const RegisterState());
+  RegisterCubit({required UserDataStorage storage, Connectivity? connectivity})
+    : _storage = storage,
+      _connectivity = connectivity ?? Connectivity(),
+      super(const RegisterState());
 
   void init() {
     _checkLoginStatus();
-    _connectivitySub =
-        _connectivity.onConnectivityChanged.listen((results) {
-          final ConnectivityResult status = results.first;
-          final bool hasConn = status != ConnectivityResult.none;
-          if (hasConn != state.hasConnection) {
-            emit(state.copyWith(hasConnection: hasConn));
-          }
-        });
+    _connectivitySub = _connectivity.onConnectivityChanged.listen((results) {
+      final ConnectivityResult status = results.first;
+      final bool hasConn = status != ConnectivityResult.none;
+      if (hasConn != state.hasConnection) {
+        emit(state.copyWith(hasConnection: hasConn));
+      }
+    });
   }
 
   Future<void> _checkLoginStatus() async {
@@ -48,10 +45,12 @@ class RegisterCubit extends Cubit<RegisterState> {
       );
       emit(state.copyWith(isSubmitting: false, registrationSuccess: true));
     } catch (e) {
-      emit(state.copyWith(
-        isSubmitting: false,
-        errorMessage: 'Registration error: \$e',
-      ),);
+      emit(
+        state.copyWith(
+          isSubmitting: false,
+          errorMessage: 'Registration error: \$e',
+        ),
+      );
     }
   }
 

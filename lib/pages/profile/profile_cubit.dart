@@ -13,8 +13,8 @@ class ProfileCubit extends Cubit<ProfileState> {
   ProfileCubit({
     required UserDataStorage storage,
     this.mcuUrl = 'http://192.168.1.150',
-  })  : _storage = storage,
-        super(const ProfileState()) {
+  }) : _storage = storage,
+       super(const ProfileState()) {
     _loadUser();
   }
 
@@ -22,10 +22,7 @@ class ProfileCubit extends Cubit<ProfileState> {
     try {
       final first = await _storage.getFirstName();
       final last = await _storage.getLastName();
-      emit(state.copyWith(
-        firstName: first,
-        lastName: last,
-      ),);
+      emit(state.copyWith(firstName: first, lastName: last));
     } catch (e) {
       emit(state.copyWith(errorMessage: e.toString()));
     }
@@ -38,7 +35,8 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   Future<bool> isControllerConnected() async {
     try {
-      final resp = await http.get(Uri.parse('$mcuUrl/status'))
+      final resp = await http
+          .get(Uri.parse('$mcuUrl/status'))
           .timeout(const Duration(seconds: 2));
       return resp.statusCode == 200;
     } catch (_) {

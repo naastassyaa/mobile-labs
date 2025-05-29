@@ -1,27 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_project/components/general/custom_button.dart';
 import 'package:test_project/components/general/custom_text_field.dart';
 import 'package:test_project/components/specific/input_validation.dart';
-
-typedef OnLogin = void Function(String email, String password);
+import 'package:test_project/pages/auth/login/login_cubit.dart';
 
 class LoginForm extends StatelessWidget {
   final GlobalKey<FormState> formKey;
   final TextEditingController emailController;
   final TextEditingController passwordController;
   final bool isLoading;
-  final OnLogin onLogin;
-  final VoidCallback onForgotPassword;
-  final VoidCallback onRegister;
 
   const LoginForm({
     required this.formKey,
     required this.emailController,
     required this.passwordController,
     required this.isLoading,
-    required this.onLogin,
-    required this.onForgotPassword,
-    required this.onRegister,
     super.key,
   });
 
@@ -56,16 +50,17 @@ class LoginForm extends StatelessWidget {
           ),
           const SizedBox(height: 40),
           CustomButton(
-            onPressed: isLoading
-                ? null
-                : () {
-              if (formKey.currentState!.validate()) {
-                onLogin(
-                  emailController.text.trim(),
-                  passwordController.text.trim(),
-                );
-              }
-            },
+            onPressed:
+                isLoading
+                    ? null
+                    : () {
+                      if (formKey.currentState!.validate()) {
+                        context.read<LoginCubit>().login(
+                          emailController.text.trim(),
+                          passwordController.text.trim(),
+                        );
+                      }
+                    },
             text: 'Log in',
             textColor: Colors.white,
             style: ElevatedButton.styleFrom(
@@ -74,7 +69,7 @@ class LoginForm extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           TextButton(
-            onPressed: onForgotPassword,
+            onPressed: () => Navigator.pushNamed(context, '/forgot-password'),
             child: Text(
               'Forgot password?',
               style: TextStyle(color: Colors.lightBlue.shade400),
@@ -88,7 +83,7 @@ class LoginForm extends StatelessWidget {
             children: [
               const Text("Don't have an account?"),
               TextButton(
-                onPressed: onRegister,
+                onPressed: () => Navigator.pushNamed(context, '/register'),
                 child: Text(
                   'Register now',
                   style: TextStyle(color: Colors.lightBlue.shade400),

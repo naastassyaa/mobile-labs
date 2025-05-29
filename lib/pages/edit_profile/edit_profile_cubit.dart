@@ -14,16 +14,15 @@ class EditProfileCubit extends Cubit<EditProfileState> {
   EditProfileCubit({
     required UserDataStorage storage,
     Connectivity? connectivity,
-  })  : _storage = storage,
-        _connectivity = connectivity ?? Connectivity(),
-        super(const EditProfileState());
+  }) : _storage = storage,
+       _connectivity = connectivity ?? Connectivity(),
+       super(const EditProfileState());
 
   void init() {
-    _connectivitySub =
-        _connectivity.onConnectivityChanged.listen((results) {
-          final ConnectivityResult status = results.first;
-          _onConnectivityChanged(status);
-        });
+    _connectivitySub = _connectivity.onConnectivityChanged.listen((results) {
+      final ConnectivityResult status = results.first;
+      _onConnectivityChanged(status);
+    });
     _checkInitialConnectivity();
     _loadProfile();
   }
@@ -44,23 +43,24 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     try {
       final data = await _storage.getCurrentUser();
       if (data != null) {
-        emit(state.copyWith(
-          loaded: true,
-          name: data['name']?.toString(),
-          surname: data['surname']?.toString(),
-          dob: data['dob']?.toString(),
-          email: data['email']?.toString(),
-          phone: data['phone']?.toString(),
-          gender: data['gender']?.toString(),
-          password: data['password']?.toString(),
-        ),);
+        emit(
+          state.copyWith(
+            loaded: true,
+            name: data['name']?.toString(),
+            surname: data['surname']?.toString(),
+            dob: data['dob']?.toString(),
+            email: data['email']?.toString(),
+            phone: data['phone']?.toString(),
+            gender: data['gender']?.toString(),
+            password: data['password']?.toString(),
+          ),
+        );
       }
-    } catch (_) {
-    }
+    } catch (_) {}
   }
 
   Future<void> saveProfile() async {
-    emit(state.copyWith(isSubmitting: true, saveSuccess: false),);
+    emit(state.copyWith(isSubmitting: true, saveSuccess: false));
     try {
       await _storage.saveUser(
         email: state.email ?? '',
@@ -74,10 +74,7 @@ class EditProfileCubit extends Cubit<EditProfileState> {
       );
       emit(state.copyWith(isSubmitting: false, saveSuccess: true));
     } catch (e) {
-      emit(state.copyWith(
-        isSubmitting: false,
-        errorMessage: 'Save error: $e',
-      ),);
+      emit(state.copyWith(isSubmitting: false, errorMessage: 'Save error: $e'));
     }
   }
 
@@ -89,14 +86,16 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     String? phone,
     String? gender,
   }) {
-    emit(state.copyWith(
-      name: name,
-      surname: surname,
-      dob: dob,
-      email: email,
-      phone: phone,
-      gender: gender,
-    ),);
+    emit(
+      state.copyWith(
+        name: name,
+        surname: surname,
+        dob: dob,
+        email: email,
+        phone: phone,
+        gender: gender,
+      ),
+    );
   }
 
   @override

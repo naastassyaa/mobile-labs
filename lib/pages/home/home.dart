@@ -7,6 +7,7 @@ import 'package:test_project/pages/home/home_cubit.dart';
 
 class HomePage extends StatelessWidget {
   final List<String>? initialProducts;
+
   const HomePage({super.key, this.initialProducts});
 
   @override
@@ -20,6 +21,7 @@ class HomePage extends StatelessWidget {
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
+
   @override
   HomeViewState createState() => HomeViewState();
 }
@@ -61,9 +63,12 @@ class HomeViewState extends State<HomeView> {
                     decoration: InputDecoration(
                       labelText: 'Search product',
                       prefixIcon: const Icon(
-                          Icons.search, color: Colors.lightBlue,),
+                        Icons.search,
+                        color: Colors.lightBlue,
+                      ),
                       border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                       filled: true,
                       fillColor: Colors.white,
                     ),
@@ -78,7 +83,8 @@ class HomeViewState extends State<HomeView> {
                           decoration: InputDecoration(
                             labelText: 'Add product',
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20),),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
                             filled: true,
                             fillColor: Colors.white,
                           ),
@@ -104,16 +110,23 @@ class HomeViewState extends State<HomeView> {
                       children: [
                         ExpansionTile(
                           title: const Text(
-                              'List of products in the refrigerator',),
-                          children: state.filteredItems.map((item) => ListTile(
-                            title: Text(item),
-                            trailing: IconButton(
-                              icon: const Icon(Icons.delete),
-                              onPressed: () => context
-                                  .read<HomeCubit>()
-                                  .removeProduct(item),
-                            ),
-                          ),).toList(),
+                            'List of products in the refrigerator',
+                          ),
+                          children:
+                              state.filteredItems
+                                  .map(
+                                    (item) => ListTile(
+                                      title: Text(item),
+                                      trailing: IconButton(
+                                        icon: const Icon(Icons.delete),
+                                        onPressed:
+                                            () => context
+                                                .read<HomeCubit>()
+                                                .removeProduct(item),
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
                         ),
                       ],
                     ),

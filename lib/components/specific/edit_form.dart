@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_project/components/general/custom_text_field.dart';
 import 'package:test_project/components/specific/input_validation.dart';
+import 'package:test_project/pages/edit_profile/edit_profile_cubit.dart';
 
 class EditProfileFormFields extends StatelessWidget {
   final TextEditingController nameController;
@@ -9,12 +11,6 @@ class EditProfileFormFields extends StatelessWidget {
   final TextEditingController emailController;
   final TextEditingController phoneController;
   final String? gender;
-  final void Function(String) onNameChanged;
-  final void Function(String) onSurnameChanged;
-  final void Function(String) onDobChanged;
-  final void Function(String) onEmailChanged;
-  final void Function(String) onPhoneChanged;
-  final void Function(String?) onGenderChanged;
 
   const EditProfileFormFields({
     required this.nameController,
@@ -23,31 +19,27 @@ class EditProfileFormFields extends StatelessWidget {
     required this.emailController,
     required this.phoneController,
     required this.gender,
-    required this.onNameChanged,
-    required this.onSurnameChanged,
-    required this.onDobChanged,
-    required this.onEmailChanged,
-    required this.onPhoneChanged,
-    required this.onGenderChanged,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
+    final cubit = context.read<EditProfileCubit>();
+
     return Column(
       children: [
         CustomTextField(
           controller: nameController,
           labelText: 'First Name',
           validator: InputValidation.validateName,
-          onChanged: onNameChanged,
+          onChanged: (val) => cubit.updateField(name: val),
         ),
         const SizedBox(height: 16),
         CustomTextField(
           controller: surnameController,
           labelText: 'Last Name',
           validator: InputValidation.validateSurname,
-          onChanged: onSurnameChanged,
+          onChanged: (val) => cubit.updateField(surname: val),
         ),
         const SizedBox(height: 16),
         InkWell(
@@ -55,16 +47,18 @@ class EditProfileFormFields extends StatelessWidget {
             FocusScope.of(context).unfocus();
             final pickedDate = await showDatePicker(
               context: context,
-              initialDate: dobController.text.isNotEmpty
-                  ? (DateTime.tryParse(dobController.text) ?? DateTime.now())
-                  : DateTime.now(),
+              initialDate:
+                  dobController.text.isNotEmpty
+                      ? (DateTime.tryParse(dobController.text) ??
+                          DateTime.now())
+                      : DateTime.now(),
               firstDate: DateTime(1900),
               lastDate: DateTime.now(),
             );
             if (pickedDate != null) {
               final iso = pickedDate.toIso8601String().split('T')[0];
               dobController.text = iso;
-              onDobChanged(iso);
+              cubit.updateField(dob: iso);
             }
           },
           child: AbsorbPointer(
@@ -72,7 +66,7 @@ class EditProfileFormFields extends StatelessWidget {
               controller: dobController,
               labelText: 'Date of Birth',
               validator: InputValidation.validateDob,
-              onChanged: onDobChanged,
+              onChanged: (val) => cubit.updateField(dob: val),
             ),
           ),
         ),
@@ -81,14 +75,14 @@ class EditProfileFormFields extends StatelessWidget {
           controller: emailController,
           labelText: 'Email',
           validator: InputValidation.validateEmail,
-          onChanged: onEmailChanged,
+          onChanged: (val) => cubit.updateField(email: val),
         ),
         const SizedBox(height: 16),
         CustomTextField(
           controller: phoneController,
           labelText: 'Phone Number',
           validator: InputValidation.validatePhone,
-          onChanged: onPhoneChanged,
+          onChanged: (val) => cubit.updateField(phone: val),
         ),
         const SizedBox(height: 16),
         DropdownButtonFormField<String>(
@@ -99,10 +93,13 @@ class EditProfileFormFields extends StatelessWidget {
           isExpanded: true,
           value: gender,
           hint: const Text('Select Gender'),
-          items: ['Male', 'Female', 'Other']
-              .map((g) => DropdownMenuItem(value: g, child: Text(g)))
-              .toList(),
-          onChanged: onGenderChanged,
+          items:
+              [
+                'Male',
+                'Female',
+                'Other',
+              ].map((g) => DropdownMenuItem(value: g, child: Text(g))).toList(),
+          onChanged: (val) => cubit.updateField(gender: val),
         ),
       ],
     );

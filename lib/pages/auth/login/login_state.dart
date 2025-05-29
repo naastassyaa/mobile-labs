@@ -1,26 +1,26 @@
 part of 'login_cubit.dart';
 
 @immutable
-class AuthState {
+class LoginState {
   final bool isLoading;
   final bool hasConnection;
   final bool loginSuccess;
   final String? errorMessage;
 
-  const AuthState({
+  const LoginState({
     this.isLoading = false,
     this.hasConnection = true,
     this.loginSuccess = false,
     this.errorMessage,
   });
 
-  AuthState copyWith({
+  LoginState copyWith({
     bool? isLoading,
     bool? hasConnection,
     bool? loginSuccess,
     String? errorMessage,
   }) {
-    return AuthState(
+    return LoginState(
       isLoading: isLoading ?? this.isLoading,
       hasConnection: hasConnection ?? this.hasConnection,
       loginSuccess: loginSuccess ?? this.loginSuccess,

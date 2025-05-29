@@ -28,9 +28,7 @@ class CustomTextField extends StatelessWidget {
         labelStyle: const TextStyle(color: Colors.black),
         filled: true,
         fillColor: Colors.white,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
       ),
     );
   }

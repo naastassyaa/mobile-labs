@@ -17,7 +17,7 @@ class PreferencesStorage implements UserDataStorage {
     String? gender,
   }) async {
     final prefs = await _prefs;
-    final Map<String, dynamic> data = {
+    final data = {
       'email': email,
       'password': password,
       'name': name,
@@ -50,7 +50,6 @@ class PreferencesStorage implements UserDataStorage {
     final userMap = jsonDecode(userJson) as Map<String, dynamic>;
     userMap['isLoggedIn'] = false;
     await prefs.setString(email, jsonEncode(userMap));
-    await prefs.remove('currentUserEmail');
   }
 
   @override
@@ -67,6 +66,9 @@ class PreferencesStorage implements UserDataStorage {
     final userMap = jsonDecode(json) as Map<String, dynamic>;
     userMap['isLoggedIn'] = isLoggedIn;
     await prefs.setString(email, jsonEncode(userMap));
+    if (isLoggedIn) {
+      await prefs.setString('currentUserEmail', email);
+    }
   }
 
   @override

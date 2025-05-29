@@ -32,49 +32,52 @@ class _QRScanView extends StatelessWidget {
           showDialog<void>(
             context: context,
             barrierDismissible: false,
-            builder: (_) => const AlertDialog(
-              title: Text('Scanning...'),
-              content: SizedBox(
-                height: 80,
-                child: Center(child: CircularProgressIndicator()),
-              ),
-            ),
+            builder:
+                (_) => const AlertDialog(
+                  title: Text('Scanning...'),
+                  content: SizedBox(
+                    height: 80,
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+                ),
           );
         } else if (state.status == QrScanStatus.success) {
           Navigator.of(context).pop();
           await showDialog<void>(
             context: context,
-            builder: (_) => AlertDialog(
-              title: const Text('MCU replied'),
-              content: Text('Text: ${state.payload}'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('OK'),
+            builder:
+                (_) => AlertDialog(
+                  title: const Text('MCU replied'),
+                  content: Text('Text: ${state.payload}'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('OK'),
+                    ),
+                  ],
                 ),
-              ],
-            ),
           );
         } else if (state.status == QrScanStatus.failure) {
           Navigator.of(context).pop();
           await showDialog<void>(
             context: context,
-            builder: (_) => AlertDialog(
-              title: const Text('Error'),
-              content: Text(state.error ?? 'Unknown error'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('OK'),
+            builder:
+                (_) => AlertDialog(
+                  title: const Text('Error'),
+                  content: Text(state.error ?? 'Unknown error'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('OK'),
+                    ),
+                  ],
                 ),
-              ],
-            ),
           );
         }
       },
@@ -82,8 +85,8 @@ class _QRScanView extends StatelessWidget {
         appBar: AppBar(title: const Text('Scan QR')),
         body: QRView(
           key: qrKey,
-          onQRViewCreated: (ctrl) =>
-              context.read<QrScanCubit>().startScan(ctrl, password),
+          onQRViewCreated:
+              (ctrl) => context.read<QrScanCubit>().startScan(ctrl, password),
         ),
       ),
     );

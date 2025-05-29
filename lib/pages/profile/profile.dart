@@ -14,9 +14,8 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ProfileCubit>(
-      create: (context) => ProfileCubit(
-        storage: context.read<UserDataStorage>(),
-      ),
+      create:
+          (context) => ProfileCubit(storage: context.read<UserDataStorage>()),
       child: const _ProfileView(),
     );
   }
@@ -24,6 +23,63 @@ class ProfilePage extends StatelessWidget {
 
 class _ProfileView extends StatelessWidget {
   const _ProfileView();
+
+  Future<void> _onCustomizeMCU(BuildContext context) async {
+    final cubit = context.read<ProfileCubit>();
+    final connected = await cubit.isControllerConnected();
+    if (!connected) {
+      if (!context.mounted) return;
+      await showDialog<void>(
+        context: context,
+        builder:
+            (_) => AlertDialog(
+              title: const Text('Error'),
+              content: const Text(
+                'The controller was not found. '
+                'Make sure you are connected to the correct Wi-Fi.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+      );
+      return;
+    }
+
+    String? password;
+    if (!context.mounted) return;
+    await showDialog<void>(
+      context: context,
+      builder:
+          (ctx) => AlertDialog(
+            title: const Text('Enter the password for the MCU'),
+            content: TextField(
+              obscureText: true,
+              decoration: const InputDecoration(hintText: 'Password'),
+              onChanged: (v) => password = v,
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Next'),
+              ),
+            ],
+          ),
+    );
+    if (password == null || password!.isEmpty) return;
+    if (!context.mounted) return;
+
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => QRScanPage(password: password!)),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,8 +95,9 @@ class _ProfileView extends StatelessWidget {
           child: ListView(
             children: [
               BlocBuilder<ProfileCubit, ProfileState>(
-                buildWhen: (p, c) =>
-                p.firstName != c.firstName || p.lastName != c.lastName,
+                buildWhen:
+                    (p, c) =>
+                        p.firstName != c.firstName || p.lastName != c.lastName,
                 builder: (context, state) {
                   return ProfileHeader(
                     firstName: state.firstName,
@@ -51,60 +108,7 @@ class _ProfileView extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () async {
-                  final connected =
-                  await context.read<ProfileCubit>().isControllerConnected();
-                  if (!connected) {
-                    if (!context.mounted) return;
-                    await showDialog<void>(
-                      context: context,
-                      builder: (_) => AlertDialog(
-                        title: const Text('Error'),
-                        content: const Text(
-                          'The controller was not found. '
-                            'Make sure you are connected to the correct Wi-Fi.',
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text('OK'),
-                          ),
-                        ],
-                      ),
-                    );
-                    return;
-                  }
-                  String? password;
-                  if (!context.mounted) return;
-                  await showDialog<void>(
-                    context: context,
-                    builder: (ctx) => AlertDialog(
-                      title: const Text('Enter the password for the MCU'),
-                      content: TextField(
-                        obscureText: true,
-                        decoration: const InputDecoration(hintText: 'Password'),
-                        onChanged: (v) => password = v,
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(ctx),
-                          child: const Text('Cancel'),
-                        ),
-                        TextButton(
-                          onPressed: () => Navigator.pop(ctx),
-                          child: const Text('Next'),
-                        ),
-                      ],
-                    ),
-                  );
-                  if (password == null || password!.isEmpty) return;
-                  if (!context.mounted) return;
-                  Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (_) => QRScanPage(password: password!),
-                    ),
-                  );
-                },
+                onPressed: () => _onCustomizeMCU(context),
                 child: const Text('Customize MCU'),
               ),
               const SizedBox(height: 20),

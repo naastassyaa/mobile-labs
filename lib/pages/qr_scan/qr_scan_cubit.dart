@@ -21,43 +21,43 @@ class QrScanCubit extends Cubit<QrScanState> {
 
       final qrString = scanData.code;
       if (qrString == null) {
-        emit(state.copyWith(
-          status: QrScanStatus.failure,
-          error: 'Scanned data is null',
-        ),);
+        emit(
+          state.copyWith(
+            status: QrScanStatus.failure,
+            error: 'Scanned data is null',
+          ),
+        );
         return;
       }
 
       try {
         final resp = await http
             .post(
-          Uri.parse(endpoint),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
-            'password': password,
-            'payload': qrString,
-          }),
-        )
+              Uri.parse(endpoint),
+              headers: {'Content-Type': 'application/json'},
+              body: jsonEncode({'password': password, 'payload': qrString}),
+            )
             .timeout(const Duration(seconds: 3));
 
         final data = jsonDecode(resp.body) as Map<String, dynamic>;
         if (resp.statusCode == 200 && data['status'] == 'ok') {
-          emit(state.copyWith(
-            status: QrScanStatus.success,
-            payload: data['payload']?.toString(),
-          ),);
+          emit(
+            state.copyWith(
+              status: QrScanStatus.success,
+              payload: data['payload']?.toString(),
+            ),
+          );
         } else {
           final err = data['error']?.toString() ?? 'Unknown error';
-          emit(state.copyWith(
-            status: QrScanStatus.failure,
-            error: 'MCU error: $err',
-          ),);
+          emit(
+            state.copyWith(
+              status: QrScanStatus.failure,
+              error: 'MCU error: $err',
+            ),
+          );
         }
       } catch (e) {
-        emit(state.copyWith(
-          status: QrScanStatus.failure,
-          error: e.toString(),
-        ),);
+        emit(state.copyWith(status: QrScanStatus.failure, error: e.toString()));
       }
     });
   }

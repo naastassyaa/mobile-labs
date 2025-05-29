@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_project/components/general/custom_button.dart';
 import 'package:test_project/components/general/custom_text_field.dart';
 import 'package:test_project/components/specific/input_validation.dart';
-
-typedef OnRegister = void Function(String name, String email, String password);
+import 'package:test_project/pages/auth/register/register_cubit.dart';
 
 class RegisterForm extends StatelessWidget {
   final GlobalKey<FormState> formKey;
@@ -11,8 +11,6 @@ class RegisterForm extends StatelessWidget {
   final TextEditingController emailController;
   final TextEditingController passwordController;
   final bool isSubmitting;
-  final OnRegister onRegister;
-  final VoidCallback onLogin;
 
   const RegisterForm({
     required this.formKey,
@@ -20,8 +18,6 @@ class RegisterForm extends StatelessWidget {
     required this.emailController,
     required this.passwordController,
     required this.isSubmitting,
-    required this.onRegister,
-    required this.onLogin,
     super.key,
   });
 
@@ -57,17 +53,18 @@ class RegisterForm extends StatelessWidget {
           ),
           const SizedBox(height: 40),
           CustomButton(
-            onPressed: isSubmitting
-                ? null
-                : () {
-              if (formKey.currentState!.validate()) {
-                onRegister(
-                  nameController.text.trim(),
-                  emailController.text.trim(),
-                  passwordController.text.trim(),
-                );
-              }
-            },
+            onPressed:
+                isSubmitting
+                    ? null
+                    : () {
+                      if (formKey.currentState!.validate()) {
+                        context.read<RegisterCubit>().register(
+                          nameController.text.trim(),
+                          emailController.text.trim(),
+                          passwordController.text.trim(),
+                        );
+                      }
+                    },
             text: 'Sign up',
             textColor: Colors.white,
             style: ElevatedButton.styleFrom(
@@ -80,7 +77,8 @@ class RegisterForm extends StatelessWidget {
             children: [
               const Text('Already have an account?'),
               TextButton(
-                onPressed: onLogin,
+                onPressed:
+                    () => Navigator.pushReplacementNamed(context, '/login'),
                 child: Text(
                   'Log in',
                   style: TextStyle(color: Colors.lightBlue.shade400),

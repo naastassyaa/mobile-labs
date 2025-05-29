@@ -9,8 +9,7 @@ part 'history_state.dart';
 class ScanHistoryCubit extends Cubit<ScanHistoryState> {
   final String endpoint;
 
-  ScanHistoryCubit({required this.endpoint})
-      : super(const ScanHistoryState()) {
+  ScanHistoryCubit({required this.endpoint}) : super(const ScanHistoryState()) {
     fetchHistory();
   }
 
@@ -25,15 +24,14 @@ class ScanHistoryCubit extends Cubit<ScanHistoryState> {
       }
       final List<dynamic> data = jsonDecode(response.body) as List<dynamic>;
       final items = data.map((e) => e.toString()).toList();
-      emit(state.copyWith(
-        status: HistoryStatus.success,
-        history: items,
-      ),);
+      emit(state.copyWith(status: HistoryStatus.success, history: items));
     } catch (e) {
-      emit(state.copyWith(
-        status: HistoryStatus.failure,
-        errorMessage: e.toString(),
-      ),);
+      emit(
+        state.copyWith(
+          status: HistoryStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 }

@@ -16,22 +16,22 @@ class HomeCubit extends Cubit<HomeState> {
     List<String>? initialProducts,
     MqttService? mqttService,
     Connectivity? connectivity,
-  })  : _mqttService = mqttService ?? MqttService(),
-        _connectivity = connectivity ?? Connectivity(),
-        super(HomeState(
-        items: initialProducts ?? FridgeData().products,
-        filteredItems:
-        List.from(initialProducts ?? FridgeData().products),
-        temperature: 4,
-        hasConnection: true,
-      ),);
+  }) : _mqttService = mqttService ?? MqttService(),
+       _connectivity = connectivity ?? Connectivity(),
+       super(
+         HomeState(
+           items: initialProducts ?? FridgeData().products,
+           filteredItems: List.from(initialProducts ?? FridgeData().products),
+           temperature: 4,
+           hasConnection: true,
+         ),
+       );
 
   void init() {
-    _connectivitySub =
-        _connectivity.onConnectivityChanged.listen((results) {
-          final ConnectivityResult status = results.first;
-          _onConnectivityChanged(status);
-        });
+    _connectivitySub = _connectivity.onConnectivityChanged.listen((results) {
+      final ConnectivityResult status = results.first;
+      _onConnectivityChanged(status);
+    });
     _checkInitialConnectivity();
     _mqttService.onMessageReceived = (payload) {
       final items = payload.split(',').map((e) => e.trim()).toList();
@@ -63,9 +63,8 @@ class HomeCubit extends Cubit<HomeState> {
 
   void filterItems(String query) {
     final low = query.toLowerCase();
-    final filtered = state.items
-        .where((item) => item.toLowerCase().contains(low))
-        .toList();
+    final filtered =
+        state.items.where((item) => item.toLowerCase().contains(low)).toList();
     emit(state.copyWith(filteredItems: filtered));
   }
 
