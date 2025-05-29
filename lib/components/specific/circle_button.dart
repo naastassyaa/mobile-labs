@@ -6,7 +6,9 @@ class CircularButton extends StatelessWidget {
   final double size;
 
   const CircularButton({
-    required this.onPressed, required this.text, super.key,
+    required this.onPressed,
+    required this.text,
+    super.key,
     this.size = 300.0,
   });
 
@@ -21,11 +23,7 @@ class CircularButton extends StatelessWidget {
         decoration: const BoxDecoration(
           shape: BoxShape.circle,
           gradient: LinearGradient(
-            colors: [
-              Color(0xFF0D47A1),
-              Color(0xFF1976D2),
-              Color(0xFF42A5F5),
-            ],
+            colors: [Color(0xFF0D47A1), Color(0xFF1976D2), Color(0xFF42A5F5)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),

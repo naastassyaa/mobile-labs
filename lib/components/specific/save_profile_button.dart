@@ -11,9 +11,7 @@ class SaveProfileButton extends StatelessWidget {
       onPressed: onSave,
       style: ElevatedButton.styleFrom(
         minimumSize: const Size(double.infinity, 50),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       child: const Text('Save Changes'),
     );

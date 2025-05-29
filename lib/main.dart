@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_project/routes.dart';
 import 'package:test_project/storage/shared_preferences.dart';
 import 'package:test_project/storage/user_data_storage.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final userDataStorage = Preferences();
+
+  final userDataStorage = PreferencesStorage();
   final bool isLoggedIn = await userDataStorage.isLoggedIn();
 
   runApp(
-    Provider<UserDataStorage>.value(
-      value: userDataStorage,
+    RepositoryProvider<UserDataStorage>(
+      create: (_) => userDataStorage,
       child: MyApp(isLoggedIn: isLoggedIn),
     ),
   );
